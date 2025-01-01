@@ -1,0 +1,83 @@
+version: "3.8"
+
+services:
+  useraccount:
+    image: useraccount:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.useraccount.rule=PathPrefix(`/user`)"
+      - "traefik.http.services.useraccount.loadbalancer.server.port=8001"
+    
+    networks:
+      - microservices
+
+  storagemanagement:
+    image: storagemanagement:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.storagemanagement.rule=PathPrefix(`/storage`)"
+      - "traefik.http.services.storagemanagement.loadbalancer.server.port=8002"
+    
+    networks:
+      - microservices
+#hello
+  videomanagement:
+    image: videomanagement:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.videomanagement.rule=PathPrefix(`/video`)"
+      - "traefik.http.services.videomanagement.loadbalancer.server.port=8005"
+    
+    networks:
+      - microservices
+
+  usagemanagement:
+    image: usagemanagement:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.usagemanagement.rule=PathPrefix(`/usage`)"
+      - "traefik.http.services.usagemanagement.loadbalancer.server.port=8003"
+    
+    networks:
+      - microservices
+
+  loggingservice:
+    image: loggingservice:latest
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.loggingservice.rule=PathPrefix(`/logging`)"
+      - "traefik.http.services.loggingservice.loadbalancer.server.port=8004"
+    
+    networks:
+      - microservices
+
+  
+
+  traefik:
+    image: traefik:v2.9
+    container_name: traefik_service
+    ports:
+      - "80:80" # Expose Traefik for routing
+      - "8080:8080" # Traefik dashboard
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik-access.log:/var/log/traefik/access.log  # Map access log to a file
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=PathPrefix(`/traefik`)"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+    networks:
+      - microservices
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker"
+      - "--entrypoints.http.address=:80"
+      - "--accesslog=true"
+      - "--accesslog.filepath=/var/log/traefik/access.log"
+
+networks:
+  microservices:
+    driver: bridge
+
+
