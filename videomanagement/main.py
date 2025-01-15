@@ -5,12 +5,19 @@ from botocore.exceptions import NoCredentialsError
 from typing import List, Optional
 import datetime
 from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+
+if not all([AWS_ACCESS_KEY, AWS_SECRET_KEY, S3_BUCKET_NAME]):
+    raise EnvironmentError("Missing one or more required environment variables")
 
 app = FastAPI()
-
-AWS_ACCESS_KEY = ""
-AWS_SECRET_KEY = ""
-S3_BUCKET_NAME = "videoscloudproject"
 
 s3_client = boto3.client(
     "s3",
