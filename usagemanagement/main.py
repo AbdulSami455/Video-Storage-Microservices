@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 app = FastAPI()
 
 # MongoDB setup
-client = MongoClient("mongodb+srv://msamibese22seecs:i9UvBXQv6HsdOqvY@cluster0.ozyev.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+client = MongoClient("")
 db = client["UsageDatabase"]
 bandwidth_collection = db["bandwidth"]
 
